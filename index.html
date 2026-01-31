@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Valorant Heatmap Viewer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <h1>Valorant Heatmap - <span id="mapName"></span></h1>
+
+    <!-- タブ -->
+    <div class="tab-container">
+        <button class="tab-button active" onclick="switchTab('user')">ユーザー別</button>
+        <button class="tab-button" onclick="switchTab('kd')">Kill Rate</button>
+    </div>
+
+    <div id="controls">
+        <div class="slider-container">
+            <label class="slider-label" for="mapSelect">マップ</label>
+            <select id="mapSelect">
+                <option value="">選択してください</option>
+            </select>
+        </div>
+
+        <div class="slider-container">
+            <label class="slider-label" for="sideSelect">攻守</label>
+            <select id="sideSelect">
+                <option value="both">両方</option>
+                <option value="attacker">攻め側</option>
+                <option value="defender">守り側</option>
+            </select>
+        </div>
+
+        <!-- ユーザー別タブ用コントロール -->
+        <div id="userControls" class="tab-content active">
+            <div class="info">
+                マップを選択し、スライダーで時間範囲を指定してください。
+            </div>
+            <div class="slider-container">
+                <label class="slider-label">
+                    時間: <span id="timeRange">0-145秒</span>
+                </label>
+                <div id="timeRangeSlider"></div>
+            </div>
+        </div>
+
+        <!-- Kill Rateヒートマップタブ用コントロール -->
+        <div id="kdControls" class="tab-content">
+            <div class="info">
+                赤: Kill Rate > 0.5（有利）/ 青: Kill Rate < 0.5（不利）
+            </div>
+        </div>
+    </div>
+
+    <div id="plotDiv"></div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
