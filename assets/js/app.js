@@ -1,5 +1,5 @@
 // 利用可能なマップリスト（エクスポート時に置換される）
-const AVAILABLE_MAPS = ['Abyss', 'Corrode', 'Bind', 'Haven', 'Pearl', 'Split', 'Breeze'];
+const AVAILABLE_MAPS = ['Corrode', 'Split', 'Haven', 'Bind', 'Pearl', 'Breeze', 'Abyss'];
 
 let userData = null;
 let kdData = null;
