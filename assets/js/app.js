@@ -1,5 +1,5 @@
 // 利用可能なマップリスト（エクスポート時に置換される）
-const AVAILABLE_MAPS = ['Pearl', 'Haven', 'Breeze', 'Split', 'Corrode', 'Abyss', 'Bind'];
+const AVAILABLE_MAPS = ['Abyss', 'Corrode', 'Bind', 'Haven', 'Pearl', 'Split', 'Breeze'];
 
 let userData = null;
 let kdData = null;
@@ -31,22 +31,32 @@ function switchTab(tab) {
     document.getElementById('userControls').classList.toggle('active', tab === 'user');
     document.getElementById('kdControls').classList.toggle('active', tab === 'kd');
 
-    // サイド選択の「両方」オプションを制御
-    const sideSelect = document.getElementById('sideSelect');
-    const bothOption = sideSelect.querySelector('option[value="both"]');
-    if (tab === 'kd') {
-        bothOption.disabled = true;
-        if (sideSelect.value === 'both') {
-            sideSelect.value = 'attacker';
-        }
-    } else {
-        bothOption.disabled = false;
-    }
+    // ユーザー選択の表示切り替え
+    document.getElementById('userSelectContainer').style.display = tab === 'user' ? '' : 'none';
 
     // プロット更新
     const mapName = document.getElementById('mapSelect').value;
     if (mapName) {
         loadData(mapName);
+    }
+}
+
+// ユーザーセレクトを更新
+function updateUserSelect(users) {
+    const select = document.getElementById('userSelect');
+    const currentValue = select.value;
+    select.innerHTML = '';
+    users.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user;
+        option.textContent = user;
+        select.appendChild(option);
+    });
+    // 以前の選択を維持、なければ最初のユーザー
+    if (currentValue && users.includes(currentValue)) {
+        select.value = currentValue;
+    } else {
+        select.value = users[0];
     }
 }
 
@@ -73,6 +83,8 @@ async function loadData(mapName) {
             const response = await fetch(`data/${mapName}_user.json`);
             userData = await response.json();
             document.getElementById('mapName').textContent = userData.map_name;
+            updateUserSelect(userData.target_users);
+            document.getElementById('userSelectContainer').style.display = '';
             const sliderValues = timeRangeSlider.noUiSlider.get();
             updateUserPlot(parseInt(sliderValues[0]), parseInt(sliderValues[1]));
         } else {
@@ -99,192 +111,131 @@ function filterDataByTime(data, minTime, maxTime) {
 function updateUserPlot(minTime, maxTime) {
     if (!userData) return;
 
+    const selectedUser = document.getElementById('userSelect').value;
+    if (!selectedUser) return;
+
     const plotSize = getPlotSize();
     const traces = [];
-    const targetUsers = userData.target_users;
+    const user = selectedUser;
     const selectedSide = document.getElementById('sideSelect').value;
 
-    let sides = selectedSide === 'both' ? ['attacker', 'defender'] : [selectedSide];
+    const userKills = userData.kills[user] || [];
+    const userDeaths = userData.deaths[user] || [];
 
-    // モバイルでは1列、PCでは複数列
-    const cols = plotSize.isMobile ? 1 : targetUsers.length;
-    const rows = plotSize.isMobile ? targetUsers.length * sides.length : sides.length;
+    const filteredKills = filterDataByTime(
+        userKills.filter(d => d.side === selectedSide), minTime, maxTime
+    );
+    const filteredDeaths = filterDataByTime(
+        userDeaths.filter(d => d.side === selectedSide), minTime, maxTime
+    );
 
-    for (let sideIdx = 0; sideIdx < sides.length; sideIdx++) {
-        const side = sides[sideIdx];
+    const sideLabel = selectedSide === 'attacker' ? '攻め側' : '守り側';
 
-        for (let userIdx = 0; userIdx < targetUsers.length; userIdx++) {
-            const user = targetUsers[userIdx];
-            const userKills = userData.kills[user] || [];
-            const userDeaths = userData.deaths[user] || [];
-
-            const filteredKills = filterDataByTime(
-                userKills.filter(d => d.side === side), minTime, maxTime
-            );
-            const filteredDeaths = filterDataByTime(
-                userDeaths.filter(d => d.side === side), minTime, maxTime
-            );
-
-            const axisIdx = plotSize.isMobile
-                ? sideIdx * targetUsers.length + userIdx + 1
-                : sideIdx * cols + userIdx + 1;
-
-            // Kill→Victim線
-            for (let i = 0; i < filteredKills.length; i++) {
-                const kill = filteredKills[i];
-                if (kill.victim_x_pixel != null && kill.victim_y_pixel != null) {
-                    traces.push({
-                        x: [kill.x_pixel, kill.victim_x_pixel],
-                        y: [kill.y_pixel, kill.victim_y_pixel],
-                        mode: 'lines', type: 'scatter',
-                        line: { color: 'red', width: 1, dash: 'dot' },
-                        opacity: 0.3, showlegend: false, hoverinfo: 'skip',
-                        xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
-                    });
-                }
-            }
-
-            // Victim位置
-            const victimXs = filteredKills.filter(d => d.victim_x_pixel != null).map(d => d.victim_x_pixel);
-            const victimYs = filteredKills.filter(d => d.victim_y_pixel != null).map(d => d.victim_y_pixel);
-            if (victimXs.length > 0) {
-                traces.push({
-                    x: victimXs, y: victimYs, mode: 'markers', type: 'scatter',
-                    marker: { color: 'pink', size: plotSize.isMobile ? 3 : 4, opacity: 0.5, symbol: 'x' },
-                    showlegend: false, hoverinfo: 'skip',
-                    xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
-                });
-            }
-
-            // Kill位置
+    // Kill→Victim線
+    filteredKills.forEach(kill => {
+        if (kill.victim_x_pixel != null && kill.victim_y_pixel != null) {
             traces.push({
-                x: filteredKills.map(d => d.x_pixel),
-                y: filteredKills.map(d => d.y_pixel),
-                mode: 'markers', type: 'scatter',
-                marker: { color: 'red', size: plotSize.isMobile ? 5 : 7, opacity: 0.8 },
-                name: `Kill (${filteredKills.length})`,
-                showlegend: sideIdx === 0 && userIdx === 0,
-                xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
-            });
-
-            // Killer→Death線
-            for (let i = 0; i < filteredDeaths.length; i++) {
-                const death = filteredDeaths[i];
-                if (death.killer_x_pixel != null && death.killer_y_pixel != null) {
-                    traces.push({
-                        x: [death.killer_x_pixel, death.x_pixel],
-                        y: [death.killer_y_pixel, death.y_pixel],
-                        mode: 'lines', type: 'scatter',
-                        line: { color: 'blue', width: 1, dash: 'dot' },
-                        opacity: 0.3, showlegend: false, hoverinfo: 'skip',
-                        xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
-                    });
-                }
-            }
-
-            // Killer位置
-            const killerXs = filteredDeaths.filter(d => d.killer_x_pixel != null).map(d => d.killer_x_pixel);
-            const killerYs = filteredDeaths.filter(d => d.killer_y_pixel != null).map(d => d.killer_y_pixel);
-            if (killerXs.length > 0) {
-                traces.push({
-                    x: killerXs, y: killerYs, mode: 'markers', type: 'scatter',
-                    marker: { color: 'lightblue', size: plotSize.isMobile ? 3 : 4, opacity: 0.5, symbol: 'x' },
-                    showlegend: false, hoverinfo: 'skip',
-                    xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
-                });
-            }
-
-            // Death位置
-            traces.push({
-                x: filteredDeaths.map(d => d.x_pixel),
-                y: filteredDeaths.map(d => d.y_pixel),
-                mode: 'markers', type: 'scatter',
-                marker: { color: 'blue', size: plotSize.isMobile ? 5 : 7, opacity: 0.8 },
-                name: `Death (${filteredDeaths.length})`,
-                showlegend: sideIdx === 0 && userIdx === 0,
-                xaxis: `x${axisIdx}`, yaxis: `y${axisIdx}`,
+                x: [kill.x_pixel, kill.victim_x_pixel],
+                y: [kill.y_pixel, kill.victim_y_pixel],
+                mode: 'lines', type: 'scatter',
+                line: { color: 'red', width: 1, dash: 'dot' },
+                opacity: 0.3, showlegend: false, hoverinfo: 'skip',
             });
         }
+    });
+
+    // Victim位置
+    const victimXs = filteredKills.filter(d => d.victim_x_pixel != null).map(d => d.victim_x_pixel);
+    const victimYs = filteredKills.filter(d => d.victim_y_pixel != null).map(d => d.victim_y_pixel);
+    if (victimXs.length > 0) {
+        traces.push({
+            x: victimXs, y: victimYs, mode: 'markers', type: 'scatter',
+            marker: { color: 'pink', size: 5, opacity: 0.5, symbol: 'x' },
+            showlegend: false, hoverinfo: 'skip',
+        });
     }
 
-    const subplotHeight = plotSize.isMobile ? 300 : plotSize.height;
-    const totalHeight = plotSize.isMobile ? rows * subplotHeight : (rows === 1 ? subplotHeight : subplotHeight * 2);
+    // Kill位置
+    traces.push({
+        x: filteredKills.map(d => d.x_pixel),
+        y: filteredKills.map(d => d.y_pixel),
+        mode: 'markers', type: 'scatter',
+        marker: { color: 'red', size: 7, opacity: 0.8 },
+        name: `Kill (${filteredKills.length})`,
+    });
+
+    // Killer→Death線
+    filteredDeaths.forEach(death => {
+        if (death.killer_x_pixel != null && death.killer_y_pixel != null) {
+            traces.push({
+                x: [death.killer_x_pixel, death.x_pixel],
+                y: [death.killer_y_pixel, death.y_pixel],
+                mode: 'lines', type: 'scatter',
+                line: { color: 'blue', width: 1, dash: 'dot' },
+                opacity: 0.3, showlegend: false, hoverinfo: 'skip',
+            });
+        }
+    });
+
+    // Killer位置
+    const killerXs = filteredDeaths.filter(d => d.killer_x_pixel != null).map(d => d.killer_x_pixel);
+    const killerYs = filteredDeaths.filter(d => d.killer_y_pixel != null).map(d => d.killer_y_pixel);
+    if (killerXs.length > 0) {
+        traces.push({
+            x: killerXs, y: killerYs, mode: 'markers', type: 'scatter',
+            marker: { color: 'lightblue', size: 5, opacity: 0.5, symbol: 'x' },
+            showlegend: false, hoverinfo: 'skip',
+        });
+    }
+
+    // Death位置
+    traces.push({
+        x: filteredDeaths.map(d => d.x_pixel),
+        y: filteredDeaths.map(d => d.y_pixel),
+        mode: 'markers', type: 'scatter',
+        marker: { color: 'blue', size: 7, opacity: 0.8 },
+        name: `Death (${filteredDeaths.length})`,
+    });
+
+    const size = Math.min(plotSize.width, 600);
 
     const layout = {
-        title: '',
-        grid: { rows: rows, columns: cols, pattern: 'independent', roworder: 'top to bottom' },
-        showlegend: !plotSize.isMobile,
-        width: plotSize.width,
-        height: totalHeight,
+        title: {
+            text: `${user} (${sideLabel})`,
+            font: { size: 16 }
+        },
+        showlegend: true,
+        legend: { x: 0, y: -0.1, orientation: 'h' },
+        width: size,
+        height: size,
         plot_bgcolor: '#2a2a2a',
         paper_bgcolor: '#1a1a1a',
-        font: { color: '#ffffff', size: plotSize.isMobile ? 10 : 12 },
-        margin: { l: 40, r: 20, t: 40, b: 40 },
-        images: [],
-        annotations: []
+        font: { color: '#ffffff' },
+        margin: { l: 20, r: 20, t: 50, b: 50 },
+        xaxis: {
+            range: [0, userData.image_width], showgrid: true, gridcolor: '#444',
+            showticklabels: false, scaleanchor: 'y', scaleratio: 1,
+        },
+        yaxis: {
+            range: [userData.image_height, 0], showgrid: true, gridcolor: '#444',
+            showticklabels: false,
+        },
+        images: []
     };
-
-    // サブプロットタイトル
-    for (let sideIdx = 0; sideIdx < sides.length; sideIdx++) {
-        const sideLabel = sides[sideIdx] === 'attacker' ? '攻め' : '守り';
-        for (let userIdx = 0; userIdx < targetUsers.length; userIdx++) {
-            const idx = plotSize.isMobile
-                ? sideIdx * targetUsers.length + userIdx + 1
-                : sideIdx * cols + userIdx + 1;
-            layout.annotations.push({
-                text: `${targetUsers[userIdx]} (${sideLabel})`,
-                xref: idx === 1 ? 'x domain' : `x${idx} domain`,
-                yref: idx === 1 ? 'y domain' : `y${idx} domain`,
-                x: 0.5, y: 1.02, xanchor: 'center', yanchor: 'bottom',
-                showarrow: false, font: { size: plotSize.isMobile ? 10 : 12, color: '#ffffff' }
-            });
-        }
-    }
 
     // マップ画像
     if (userData.map_image_url) {
-        for (let sideIdx = 0; sideIdx < sides.length; sideIdx++) {
-            for (let userIdx = 0; userIdx < targetUsers.length; userIdx++) {
-                const idx = plotSize.isMobile
-                    ? sideIdx * targetUsers.length + userIdx + 1
-                    : sideIdx * cols + userIdx + 1;
-                layout.images.push({
-                    source: userData.map_image_url,
-                    xref: idx === 1 ? 'x' : `x${idx}`,
-                    yref: idx === 1 ? 'y' : `y${idx}`,
-                    x: 0, y: 0,
-                    sizex: userData.image_width,
-                    sizey: userData.image_height,
-                    sizing: 'stretch', opacity: 0.5, layer: 'below'
-                });
-            }
-        }
+        layout.images.push({
+            source: userData.map_image_url,
+            xref: 'x', yref: 'y',
+            x: 0, y: 0,
+            sizex: userData.image_width,
+            sizey: userData.image_height,
+            sizing: 'stretch', opacity: 0.5, layer: 'below'
+        });
     }
 
-    // 軸設定
-    const imageWidth = userData.image_width || 512;
-    const imageHeight = userData.image_height || 512;
-    for (let sideIdx = 0; sideIdx < sides.length; sideIdx++) {
-        for (let userIdx = 0; userIdx < targetUsers.length; userIdx++) {
-            const idx = plotSize.isMobile
-                ? sideIdx * targetUsers.length + userIdx + 1
-                : sideIdx * cols + userIdx + 1;
-            const axisName = idx === 1 ? '' : idx;
-            layout[`xaxis${axisName}`] = {
-                title: '',
-                range: [0, imageWidth], showgrid: true, gridcolor: '#444',
-                showticklabels: false
-            };
-            layout[`yaxis${axisName}`] = {
-                title: '',
-                range: [imageHeight, 0], showgrid: true, gridcolor: '#444',
-                scaleanchor: `x${axisName}`, scaleratio: 1,
-                showticklabels: false
-            };
-        }
-    }
-
-    Plotly.newPlot('plotDiv', traces, layout, {responsive: true, displayModeBar: !plotSize.isMobile});
+    Plotly.newPlot('plotDiv', traces, layout, {responsive: true, displayModeBar: false});
 }
 
 // Kill Rateヒートマッププロットを更新
@@ -292,9 +243,7 @@ function updateKdPlot() {
     if (!kdData) return;
 
     const plotSize = getPlotSize();
-    const selectedSide = document.getElementById('sideSelect').value === 'both'
-        ? 'attacker'
-        : document.getElementById('sideSelect').value;
+    const selectedSide = document.getElementById('sideSelect').value;
     const sideData = kdData.sides[selectedSide];
 
     if (!sideData) return;
@@ -415,6 +364,15 @@ document.getElementById('sideSelect').addEventListener('change', function() {
     }
 });
 
+// ユーザー選択イベント
+document.getElementById('userSelect').addEventListener('change', function() {
+    const mapName = document.getElementById('mapSelect').value;
+    if (mapName && currentTab === 'user' && userData) {
+        const sliderValues = timeRangeSlider.noUiSlider.get();
+        updateUserPlot(parseInt(sliderValues[0]), parseInt(sliderValues[1]));
+    }
+});
+
 // ウィンドウリサイズ時にプロットを更新
 let resizeTimeout;
 window.addEventListener('resize', function() {
@@ -434,4 +392,10 @@ window.addEventListener('resize', function() {
 
 // 初期化
 initializeMapSelect();
-document.getElementById('plotDiv').innerHTML = '<p style="color: #888;">マップを選択してください。</p>';
+// デフォルトで最初のマップを選択
+if (AVAILABLE_MAPS.length > 0) {
+    document.getElementById('mapSelect').value = AVAILABLE_MAPS[0];
+    loadData(AVAILABLE_MAPS[0]);
+} else {
+    document.getElementById('plotDiv').innerHTML = '<p style="color: #888;">マップを選択してください。</p>';
+}
