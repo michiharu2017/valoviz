@@ -3,6 +3,7 @@ const AVAILABLE_MAPS = ['Abyss', 'Bind', 'Breeze', 'Corrode', 'Haven', 'Pearl', 
 
 let userData = null;
 let kdData = null;
+let positionData = null;
 let currentTab = 'user';
 
 // レスポンシブなプロットサイズを計算
@@ -24,15 +25,23 @@ function switchTab(tab) {
 
     // タブボタンのアクティブ状態を更新
     document.querySelectorAll('.tab-button').forEach((btn, idx) => {
-        btn.classList.toggle('active', (tab === 'user' && idx === 0) || (tab === 'kd' && idx === 1));
+        btn.classList.toggle('active',
+            (tab === 'user' && idx === 0) ||
+            (tab === 'kd' && idx === 1) ||
+            (tab === 'position' && idx === 2)
+        );
     });
 
     // コントロールの表示切り替え
     document.getElementById('userControls').classList.toggle('active', tab === 'user');
     document.getElementById('kdControls').classList.toggle('active', tab === 'kd');
+    document.getElementById('positionControls').classList.toggle('active', tab === 'position');
 
     // ユーザー選択の表示切り替え
     document.getElementById('userSelectContainer').style.display = tab === 'user' ? '' : 'none';
+
+    // ポジションタブでは攻守プルダウンを非表示
+    document.getElementById('sideSelectContainer').style.display = tab === 'position' ? 'none' : '';
 
     // プロット更新
     const mapName = document.getElementById('mapSelect').value;
@@ -87,11 +96,16 @@ async function loadData(mapName) {
             document.getElementById('userSelectContainer').style.display = '';
             const sliderValues = timeRangeSlider.noUiSlider.get();
             updateUserPlot(parseInt(sliderValues[0]), parseInt(sliderValues[1]));
-        } else {
+        } else if (currentTab === 'kd') {
             const response = await fetch(`data/${mapName}_killrate.json`);
             kdData = await response.json();
             document.getElementById('mapName').textContent = kdData.map_name;
             updateKdPlot();
+        } else if (currentTab === 'position') {
+            const response = await fetch(`data/${mapName}_position.json`);
+            positionData = await response.json();
+            document.getElementById('mapName').textContent = positionData.map_name;
+            updatePositionPlot();
         }
     } catch (error) {
         console.error('Error loading data:', error);
@@ -244,17 +258,25 @@ function updateKdPlot() {
 
     const plotSize = getPlotSize();
     const selectedSide = document.getElementById('sideSelect').value;
-    const sideData = kdData.sides[selectedSide];
+    const timeKey = document.getElementById('kdTimeSelect').value;
+    const sideData = kdData.sides[selectedSide]?.[timeKey];
 
     if (!sideData) return;
 
     const sideLabel = selectedSide === 'attacker' ? '攻め側' : '守り側';
+    const timeLabel = timeKey === 'early' ? '前半' : (timeKey === 'late' ? '後半' : '');
+
+    // kill/deathカウントをcustomdataに格納
+    const customdata = sideData.kill_grid.map((row, i) =>
+        row.map((k, j) => [k, sideData.death_grid[i][j]])
+    );
 
     // ヒートマップトレース（透過付き）
     const trace = {
         z: sideData.kill_rate,
         x: sideData.x_bin_centers,
         y: sideData.y_bin_centers,
+        customdata: customdata,
         type: 'heatmap',
         colorscale: [
             [0, 'rgba(0, 0, 255, 0.7)'],
@@ -268,7 +290,7 @@ function updateKdPlot() {
             len: 0.8,
             thickness: plotSize.isMobile ? 15 : 20,
         },
-        hovertemplate: 'Kill Rate: %{z:.2f}<extra></extra>',
+        hovertemplate: 'Kill Rate: %{z:.2f}<br>Kill: %{customdata[0]}, Death: %{customdata[1]}<extra></extra>',
         showscale: true,
     };
 
@@ -276,7 +298,7 @@ function updateKdPlot() {
 
     const layout = {
         title: {
-            text: `${kdData.map_name} (${sideLabel})`,
+            text: `${kdData.map_name} (${sideLabel}${timeLabel ? ', ' + timeLabel : ''})`,
             font: { size: plotSize.isMobile ? 14 : 18 }
         },
         width: size,
@@ -319,6 +341,135 @@ function updateKdPlot() {
     Plotly.newPlot('plotDiv', [trace], layout, {responsive: true, displayModeBar: !plotSize.isMobile});
 }
 
+// ポジションタブ用: ラウンド結果と表示対象からデータキーを生成
+function getPositionFilterKeys(roundOutcome, displayTarget) {
+    // JSONキー: attacker_won, attacker_lost, defender_won, defender_lost
+    if (roundOutcome === 'attacker_won') {
+        return [`${displayTarget}_won`];
+    } else if (roundOutcome === 'attacker_lost') {
+        return [`${displayTarget}_lost`];
+    }
+    // all: 両方のラウンド結果を合算
+    return [`${displayTarget}_won`, `${displayTarget}_lost`];
+}
+
+// 指定キーのカウントとkillイベント数を合算
+function getPositionCount(filters, keys) {
+    const firstKey = Object.keys(filters)[0];
+    const gridSize = filters[firstKey].count.length;
+    const count = Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
+    let totalKillEvents = 0;
+
+    for (const key of keys) {
+        if (filters[key]) {
+            totalKillEvents += filters[key].total_kill_events;
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    count[i][j] += filters[key].count[i][j] || 0;
+                }
+            }
+        }
+    }
+    return { count, totalKillEvents };
+}
+
+// ポジションヒートマッププロットを更新
+function updatePositionPlot() {
+    if (!positionData) return;
+
+    const plotSize = getPlotSize();
+    const roundOutcome = document.getElementById('roundResultSelect').value;
+    const displayTarget = document.getElementById('displayTargetSelect').value;
+
+    const outcomeLabel = roundOutcome === 'attacker_won' ? '攻め側勝ち' : (roundOutcome === 'attacker_lost' ? '攻め側負け' : '全ラウンド');
+
+    const firstKey = Object.keys(positionData.filters)[0];
+    const xBinCenters = positionData.filters[firstKey].x_bin_centers;
+    const yBinCenters = positionData.filters[firstKey].y_bin_centers;
+    const gridSize = xBinCenters.length;
+
+    const size = Math.min(plotSize.width, plotSize.isMobile ? 400 : 800);
+
+    const keys = getPositionFilterKeys(roundOutcome, displayTarget);
+    const data = getPositionCount(positionData.filters, keys);
+    const totalKillEvents = data.totalKillEvents;
+
+    const probability = data.count.map(row =>
+        row.map(v => totalKillEvents > 0 ? v / totalKillEvents : 0)
+    );
+
+    const targetLabel = displayTarget === 'attacker' ? '攻め側' : '守り側';
+    const colorscale = displayTarget === 'attacker' ? [
+        [0, 'rgba(0, 50, 50, 0.1)'],
+        [0.3, 'rgba(0, 150, 150, 0.4)'],
+        [0.6, 'rgba(0, 220, 220, 0.6)'],
+        [1, 'rgba(0, 255, 255, 0.9)']
+    ] : [
+        [0, 'rgba(50, 50, 0, 0.1)'],
+        [0.3, 'rgba(150, 150, 0, 0.4)'],
+        [0.6, 'rgba(220, 220, 0, 0.6)'],
+        [1, 'rgba(255, 255, 0, 0.9)']
+    ];
+
+    const traces = [{
+        z: probability,
+        x: xBinCenters,
+        y: yBinCenters,
+        type: 'heatmap',
+        colorscale: colorscale,
+        zmin: 0,
+        colorbar: {
+            title: plotSize.isMobile ? '' : '確率',
+            len: 0.8,
+            thickness: plotSize.isMobile ? 15 : 20,
+            tickformat: '.0%',
+        },
+        hovertemplate: '%{z:.1%}<extra></extra>',
+        showscale: true,
+    }];
+
+    const titleText = `${positionData.map_name} (${outcomeLabel}, ${targetLabel}) - kill${totalKillEvents}件`;
+
+    const layout = {
+        title: {
+            text: titleText,
+            font: { size: plotSize.isMobile ? 14 : 18 }
+        },
+        width: size,
+        height: size,
+        xaxis: {
+            title: '',
+            range: [0, positionData.image_width],
+            scaleanchor: 'y',
+            scaleratio: 1,
+            showticklabels: false,
+        },
+        yaxis: {
+            title: '',
+            range: [positionData.image_height, 0],
+            showticklabels: false,
+        },
+        plot_bgcolor: '#2a2a2a',
+        paper_bgcolor: '#1a1a1a',
+        font: { color: '#ffffff' },
+        margin: { l: 20, r: 60, t: 50, b: 20 },
+        images: [],
+    };
+
+    if (positionData.map_image_url) {
+        layout.images.push({
+            source: positionData.map_image_url,
+            xref: 'x', yref: 'y',
+            x: 0, y: 0,
+            sizex: positionData.image_width,
+            sizey: positionData.image_height,
+            sizing: 'stretch', opacity: 0.5, layer: 'below'
+        });
+    }
+
+    Plotly.newPlot('plotDiv', traces, layout, {responsive: true, displayModeBar: !plotSize.isMobile});
+}
+
 // レンジスライダーの初期化
 const timeRangeSlider = document.getElementById('timeRangeSlider');
 noUiSlider.create(timeRangeSlider, {
@@ -358,9 +509,32 @@ document.getElementById('sideSelect').addEventListener('change', function() {
         if (currentTab === 'user') {
             const sliderValues = timeRangeSlider.noUiSlider.get();
             updateUserPlot(parseInt(sliderValues[0]), parseInt(sliderValues[1]));
-        } else {
+        } else if (currentTab === 'kd') {
             updateKdPlot();
+        } else if (currentTab === 'position') {
+            updatePositionPlot();
         }
+    }
+});
+
+// Kill Rate時間帯選択イベント
+document.getElementById('kdTimeSelect').addEventListener('change', function() {
+    if (currentTab === 'kd' && kdData) {
+        updateKdPlot();
+    }
+});
+
+// ラウンド結果選択イベント
+document.getElementById('roundResultSelect').addEventListener('change', function() {
+    if (currentTab === 'position' && positionData) {
+        updatePositionPlot();
+    }
+});
+
+// 表示対象選択イベント
+document.getElementById('displayTargetSelect').addEventListener('change', function() {
+    if (currentTab === 'position' && positionData) {
+        updatePositionPlot();
     }
 });
 
@@ -385,6 +559,8 @@ window.addEventListener('resize', function() {
                 updateUserPlot(parseInt(sliderValues[0]), parseInt(sliderValues[1]));
             } else if (currentTab === 'kd' && kdData) {
                 updateKdPlot();
+            } else if (currentTab === 'position' && positionData) {
+                updatePositionPlot();
             }
         }
     }, 250);

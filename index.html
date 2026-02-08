@@ -16,6 +16,7 @@
     <div class="tab-container">
         <button class="tab-button active" onclick="switchTab('user')">ユーザー別</button>
         <button class="tab-button" onclick="switchTab('kd')">Kill Rate</button>
+        <button class="tab-button" onclick="switchTab('position')">ポジション</button>
     </div>
 
     <div id="controls">
@@ -26,7 +27,7 @@
             </select>
         </div>
 
-        <div class="slider-container">
+        <div class="slider-container" id="sideSelectContainer">
             <label class="slider-label" for="sideSelect">攻守</label>
             <select id="sideSelect">
                 <option value="attacker">攻め側</option>
@@ -58,6 +59,36 @@
         <div id="kdControls" class="tab-content">
             <div class="info">
                 赤: Kill Rate > 0.5（有利）/ 青: Kill Rate < 0.5（不利）
+            </div>
+            <div class="slider-container">
+                <label class="slider-label" for="kdTimeSelect">時間帯</label>
+                <select id="kdTimeSelect">
+                    <option value="all">全て</option>
+                    <option value="early">前半（〜40秒）</option>
+                    <option value="late">後半（40秒〜）</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ポジションヒートマップタブ用コントロール -->
+        <div id="positionControls" class="tab-content">
+            <div class="info">
+                キルイベント発生時にそのセルにプレイヤーがいる確率を表示します。
+            </div>
+            <div class="slider-container">
+                <label class="slider-label" for="roundResultSelect">ラウンド結果</label>
+                <select id="roundResultSelect">
+                    <option value="all">全て</option>
+                    <option value="attacker_won">攻め側勝ち</option>
+                    <option value="attacker_lost">攻め側負け</option>
+                </select>
+            </div>
+            <div class="slider-container">
+                <label class="slider-label" for="displayTargetSelect">表示対象</label>
+                <select id="displayTargetSelect">
+                    <option value="attacker">攻め側</option>
+                    <option value="defender">守り側</option>
+                </select>
             </div>
         </div>
     </div>
