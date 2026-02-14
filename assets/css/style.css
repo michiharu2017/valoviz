@@ -170,6 +170,66 @@ select {
     }
 }
 
+/* 勝率テーブル */
+.stats-table {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.stats-table th,
+.stats-table td {
+    padding: 8px 12px;
+    border: 1px solid #444;
+    text-align: center;
+}
+.stats-table th {
+    background-color: #333;
+    font-weight: bold;
+}
+.stats-sortable {
+    cursor: pointer;
+    user-select: none;
+}
+.stats-sortable:hover {
+    background-color: #444;
+}
+.stats-map {
+    font-weight: bold;
+    background-color: #2a2a2a;
+    vertical-align: middle;
+}
+.stats-side {
+    color: #aaa;
+    font-size: 12px;
+}
+.stats-side-header {
+    font-size: 12px;
+    font-weight: normal;
+    color: #ccc;
+}
+.stats-cell {
+    font-weight: bold;
+    font-size: 15px;
+}
+.stats-detail {
+    font-size: 11px;
+    color: #999;
+    font-weight: normal;
+}
+.stats-badge {
+    font-size: 10px;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+.stats-badge-top {
+    color: #ff6b6b;
+}
+.stats-badge-bottom {
+    color: #6b9fff;
+}
+
 /* PC */
 @media (min-width: 1024px) {
     body {

@@ -14,13 +14,15 @@
 
     <!-- タブ -->
     <div class="tab-container">
-        <button class="tab-button active" onclick="switchTab('user')">ユーザー別</button>
+        <button class="tab-button" onclick="switchTab('user')">ユーザー別</button>
         <button class="tab-button" onclick="switchTab('kd')">Kill Rate</button>
         <button class="tab-button" onclick="switchTab('position')">ポジション</button>
+        <button class="tab-button" onclick="switchTab('userkd')">Kill Rate差分</button>
+        <button class="tab-button active" onclick="switchTab('stats')">勝率</button>
     </div>
 
     <div id="controls">
-        <div class="slider-container">
+        <div class="slider-container" id="mapSelectContainer">
             <label class="slider-label" for="mapSelect">マップ</label>
             <select id="mapSelect">
                 <option value="">選択してください</option>
@@ -43,7 +45,7 @@
         </div>
 
         <!-- ユーザー別タブ用コントロール -->
-        <div id="userControls" class="tab-content active">
+        <div id="userControls" class="tab-content">
             <div class="info">
                 マップを選択し、スライダーで時間範囲を指定してください。
             </div>
@@ -89,6 +91,28 @@
                     <option value="attacker">攻め側</option>
                     <option value="defender">守り側</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- ユーザー別Kill Rate差分タブ用コントロール -->
+        <div id="userkdControls" class="tab-content">
+            <div class="info">
+                ユーザーのKill Rateと全体平均の差を表示。赤: 平均より有利 / 青: 平均より不利
+            </div>
+            <div class="slider-container">
+                <label class="slider-label" for="userkdTimeSelect">時間帯</label>
+                <select id="userkdTimeSelect">
+                    <option value="all">全て</option>
+                    <option value="early">前半（〜40秒）</option>
+                    <option value="late">後半（40秒〜）</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 勝率タブ用コントロール -->
+        <div id="statsControls" class="tab-content active">
+            <div class="info">
+                ターゲットユーザーのマップ別ラウンド勝率を表示します。
             </div>
         </div>
     </div>

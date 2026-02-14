@@ -1,0 +1,313 @@
+{
+  "users": {
+    "big": {
+      "Abyss": {
+        "attacker": {
+          "won": 27,
+          "total": 68
+        },
+        "defender": {
+          "won": 24,
+          "total": 53
+        },
+        "overall": {
+          "won": 51,
+          "total": 121
+        }
+      },
+      "Bind": {
+        "attacker": {
+          "won": 17,
+          "total": 40
+        },
+        "defender": {
+          "won": 20,
+          "total": 37
+        },
+        "overall": {
+          "won": 37,
+          "total": 77
+        }
+      },
+      "Breeze": {
+        "attacker": {
+          "won": 16,
+          "total": 36
+        },
+        "defender": {
+          "won": 19,
+          "total": 29
+        },
+        "overall": {
+          "won": 35,
+          "total": 65
+        }
+      },
+      "Corrode": {
+        "attacker": {
+          "won": 20,
+          "total": 47
+        },
+        "defender": {
+          "won": 16,
+          "total": 39
+        },
+        "overall": {
+          "won": 36,
+          "total": 86
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 37,
+          "total": 69
+        },
+        "defender": {
+          "won": 43,
+          "total": 79
+        },
+        "overall": {
+          "won": 80,
+          "total": 148
+        }
+      },
+      "Pearl": {
+        "attacker": {
+          "won": 35,
+          "total": 50
+        },
+        "defender": {
+          "won": 20,
+          "total": 59
+        },
+        "overall": {
+          "won": 55,
+          "total": 109
+        }
+      },
+      "Split": {
+        "attacker": {
+          "won": 42,
+          "total": 65
+        },
+        "defender": {
+          "won": 47,
+          "total": 80
+        },
+        "overall": {
+          "won": 89,
+          "total": 145
+        }
+      }
+    },
+    "kok": {
+      "Abyss": {
+        "attacker": {
+          "won": 49,
+          "total": 94
+        },
+        "defender": {
+          "won": 44,
+          "total": 83
+        },
+        "overall": {
+          "won": 93,
+          "total": 177
+        }
+      },
+      "Bind": {
+        "attacker": {
+          "won": 41,
+          "total": 86
+        },
+        "defender": {
+          "won": 53,
+          "total": 119
+        },
+        "overall": {
+          "won": 94,
+          "total": 205
+        }
+      },
+      "Breeze": {
+        "attacker": {
+          "won": 45,
+          "total": 86
+        },
+        "defender": {
+          "won": 45,
+          "total": 83
+        },
+        "overall": {
+          "won": 90,
+          "total": 169
+        }
+      },
+      "Corrode": {
+        "attacker": {
+          "won": 39,
+          "total": 82
+        },
+        "defender": {
+          "won": 37,
+          "total": 87
+        },
+        "overall": {
+          "won": 76,
+          "total": 169
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 67,
+          "total": 133
+        },
+        "defender": {
+          "won": 70,
+          "total": 144
+        },
+        "overall": {
+          "won": 137,
+          "total": 277
+        }
+      },
+      "Pearl": {
+        "attacker": {
+          "won": 47,
+          "total": 89
+        },
+        "defender": {
+          "won": 40,
+          "total": 98
+        },
+        "overall": {
+          "won": 87,
+          "total": 187
+        }
+      },
+      "Split": {
+        "attacker": {
+          "won": 73,
+          "total": 126
+        },
+        "defender": {
+          "won": 71,
+          "total": 134
+        },
+        "overall": {
+          "won": 144,
+          "total": 260
+        }
+      }
+    },
+    "nar": {
+      "Abyss": {
+        "attacker": {
+          "won": 56,
+          "total": 101
+        },
+        "defender": {
+          "won": 49,
+          "total": 94
+        },
+        "overall": {
+          "won": 105,
+          "total": 195
+        }
+      },
+      "Bind": {
+        "attacker": {
+          "won": 47,
+          "total": 99
+        },
+        "defender": {
+          "won": 53,
+          "total": 126
+        },
+        "overall": {
+          "won": 100,
+          "total": 225
+        }
+      },
+      "Breeze": {
+        "attacker": {
+          "won": 76,
+          "total": 139
+        },
+        "defender": {
+          "won": 66,
+          "total": 154
+        },
+        "overall": {
+          "won": 142,
+          "total": 293
+        }
+      },
+      "Corrode": {
+        "attacker": {
+          "won": 45,
+          "total": 112
+        },
+        "defender": {
+          "won": 62,
+          "total": 122
+        },
+        "overall": {
+          "won": 107,
+          "total": 234
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 90,
+          "total": 182
+        },
+        "defender": {
+          "won": 94,
+          "total": 185
+        },
+        "overall": {
+          "won": 184,
+          "total": 367
+        }
+      },
+      "Pearl": {
+        "attacker": {
+          "won": 50,
+          "total": 89
+        },
+        "defender": {
+          "won": 44,
+          "total": 98
+        },
+        "overall": {
+          "won": 94,
+          "total": 187
+        }
+      },
+      "Split": {
+        "attacker": {
+          "won": 85,
+          "total": 145
+        },
+        "defender": {
+          "won": 85,
+          "total": 152
+        },
+        "overall": {
+          "won": 170,
+          "total": 297
+        }
+      }
+    }
+  },
+  "maps": [
+    "Abyss",
+    "Bind",
+    "Breeze",
+    "Corrode",
+    "Haven",
+    "Pearl",
+    "Split"
+  ]
+}
