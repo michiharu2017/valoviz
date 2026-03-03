@@ -45,88 +45,88 @@
       },
       "Corrode": {
         "attacker": {
-          "won": 31,
-          "total": 75
+          "won": 47,
+          "total": 100
         },
         "defender": {
-          "won": 34,
-          "total": 67
+          "won": 55,
+          "total": 100
         },
         "overall": {
-          "won": 65,
-          "total": 142
+          "won": 102,
+          "total": 200
         }
       },
       "Haven": {
         "attacker": {
-          "won": 57,
-          "total": 110
+          "won": 60,
+          "total": 120
         },
         "defender": {
-          "won": 62,
-          "total": 122
+          "won": 68,
+          "total": 134
         },
         "overall": {
-          "won": 119,
-          "total": 232
+          "won": 128,
+          "total": 254
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 44,
-          "total": 73
+          "won": 59,
+          "total": 97
         },
         "defender": {
-          "won": 33,
-          "total": 81
+          "won": 42,
+          "total": 104
         },
         "overall": {
-          "won": 77,
-          "total": 154
+          "won": 101,
+          "total": 201
         }
       },
       "Split": {
         "attacker": {
-          "won": 45,
-          "total": 77
+          "won": 58,
+          "total": 101
         },
         "defender": {
-          "won": 55,
-          "total": 92
+          "won": 59,
+          "total": 109
         },
         "overall": {
-          "won": 100,
-          "total": 169
+          "won": 117,
+          "total": 210
         }
       }
     },
     "kok": {
       "Abyss": {
         "attacker": {
-          "won": 79,
-          "total": 141
+          "won": 96,
+          "total": 165
         },
         "defender": {
-          "won": 65,
-          "total": 125
+          "won": 74,
+          "total": 136
         },
         "overall": {
-          "won": 144,
-          "total": 266
+          "won": 170,
+          "total": 301
         }
       },
       "Bind": {
         "attacker": {
-          "won": 41,
-          "total": 89
+          "won": 43,
+          "total": 97
         },
         "defender": {
-          "won": 55,
-          "total": 131
+          "won": 60,
+          "total": 143
         },
         "overall": {
-          "won": 96,
-          "total": 220
+          "won": 103,
+          "total": 240
         }
       },
       "Breeze": {
@@ -145,158 +145,158 @@
       },
       "Corrode": {
         "attacker": {
-          "won": 56,
-          "total": 132
+          "won": 72,
+          "total": 157
         },
         "defender": {
-          "won": 61,
-          "total": 131
+          "won": 82,
+          "total": 164
         },
         "overall": {
-          "won": 117,
-          "total": 263
+          "won": 154,
+          "total": 321
         }
       },
       "Haven": {
         "attacker": {
-          "won": 87,
-          "total": 174
+          "won": 100,
+          "total": 205
         },
         "defender": {
-          "won": 89,
-          "total": 187
+          "won": 117,
+          "total": 230
         },
         "overall": {
-          "won": 176,
-          "total": 361
+          "won": 217,
+          "total": 435
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 65,
-          "total": 140
+          "won": 91,
+          "total": 187
         },
         "defender": {
-          "won": 69,
-          "total": 152
+          "won": 94,
+          "total": 200
         },
         "overall": {
-          "won": 134,
-          "total": 292
+          "won": 185,
+          "total": 387
         }
       },
       "Split": {
         "attacker": {
-          "won": 87,
-          "total": 174
+          "won": 107,
+          "total": 210
         },
         "defender": {
-          "won": 90,
-          "total": 169
+          "won": 97,
+          "total": 197
         },
         "overall": {
-          "won": 177,
-          "total": 343
+          "won": 204,
+          "total": 407
         }
       }
     },
     "nar": {
       "Abyss": {
         "attacker": {
-          "won": 107,
-          "total": 187
+          "won": 124,
+          "total": 211
         },
         "defender": {
-          "won": 87,
-          "total": 175
+          "won": 96,
+          "total": 186
         },
         "overall": {
-          "won": 194,
-          "total": 362
+          "won": 220,
+          "total": 397
         }
       },
       "Bind": {
         "attacker": {
-          "won": 73,
-          "total": 150
+          "won": 79,
+          "total": 162
         },
         "defender": {
-          "won": 69,
-          "total": 166
+          "won": 83,
+          "total": 190
         },
         "overall": {
-          "won": 142,
-          "total": 316
+          "won": 162,
+          "total": 352
         }
       },
       "Breeze": {
         "attacker": {
-          "won": 101,
-          "total": 197
+          "won": 110,
+          "total": 214
         },
         "defender": {
-          "won": 94,
-          "total": 204
+          "won": 108,
+          "total": 227
         },
         "overall": {
-          "won": 195,
-          "total": 401
+          "won": 218,
+          "total": 441
         }
       },
       "Corrode": {
         "attacker": {
-          "won": 74,
-          "total": 189
+          "won": 103,
+          "total": 237
         },
         "defender": {
-          "won": 97,
-          "total": 199
+          "won": 110,
+          "total": 231
         },
         "overall": {
-          "won": 171,
-          "total": 388
+          "won": 213,
+          "total": 468
         }
       },
       "Haven": {
         "attacker": {
-          "won": 113,
-          "total": 242
+          "won": 129,
+          "total": 276
         },
         "defender": {
-          "won": 130,
-          "total": 259
+          "won": 168,
+          "total": 314
         },
         "overall": {
-          "won": 243,
-          "total": 501
+          "won": 297,
+          "total": 590
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 68,
-          "total": 140
+          "won": 94,
+          "total": 187
         },
         "defender": {
-          "won": 73,
-          "total": 152
+          "won": 98,
+          "total": 200
         },
         "overall": {
-          "won": 141,
-          "total": 292
+          "won": 192,
+          "total": 387
         }
       },
       "Split": {
         "attacker": {
-          "won": 108,
-          "total": 215
+          "won": 137,
+          "total": 266
         },
         "defender": {
-          "won": 117,
-          "total": 212
+          "won": 130,
+          "total": 255
         },
         "overall": {
-          "won": 225,
-          "total": 427
+          "won": 267,
+          "total": 521
         }
       }
     }
