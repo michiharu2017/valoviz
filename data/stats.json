@@ -3,16 +3,30 @@
     "big": {
       "Abyss": {
         "attacker": {
-          "won": 45,
-          "total": 97
+          "won": 53,
+          "total": 112
         },
         "defender": {
-          "won": 45,
-          "total": 86
+          "won": 52,
+          "total": 101
         },
         "overall": {
-          "won": 90,
-          "total": 183
+          "won": 105,
+          "total": 213
+        }
+      },
+      "Ascent": {
+        "attacker": {
+          "won": 21,
+          "total": 36
+        },
+        "defender": {
+          "won": 16,
+          "total": 28
+        },
+        "overall": {
+          "won": 37,
+          "total": 64
         }
       },
       "Bind": {
@@ -31,16 +45,16 @@
       },
       "Breeze": {
         "attacker": {
-          "won": 36,
-          "total": 82
+          "won": 59,
+          "total": 121
         },
         "defender": {
-          "won": 46,
-          "total": 72
+          "won": 60,
+          "total": 110
         },
         "overall": {
-          "won": 82,
-          "total": 154
+          "won": 119,
+          "total": 231
         }
       },
       "Corrode": {
@@ -57,90 +71,132 @@
           "total": 200
         }
       },
-      "Haven": {
+      "Fracture": {
         "attacker": {
-          "won": 63,
-          "total": 129
+          "won": 8,
+          "total": 13
         },
         "defender": {
-          "won": 73,
-          "total": 146
+          "won": 18,
+          "total": 22
         },
         "overall": {
-          "won": 136,
-          "total": 275
+          "won": 26,
+          "total": 35
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 85,
+          "total": 174
+        },
+        "defender": {
+          "won": 83,
+          "total": 169
+        },
+        "overall": {
+          "won": 168,
+          "total": 343
+        }
+      },
+      "Lotus": {
+        "attacker": {
+          "won": 19,
+          "total": 39
+        },
+        "defender": {
+          "won": 19,
+          "total": 48
+        },
+        "overall": {
+          "won": 38,
+          "total": 87
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 59,
-          "total": 97
+          "won": 82,
+          "total": 143
         },
         "defender": {
-          "won": 42,
-          "total": 104
+          "won": 60,
+          "total": 139
         },
         "overall": {
-          "won": 101,
-          "total": 201
+          "won": 142,
+          "total": 282
         }
       },
       "Split": {
         "attacker": {
-          "won": 60,
-          "total": 113
+          "won": 80,
+          "total": 148
         },
         "defender": {
-          "won": 61,
-          "total": 114
+          "won": 83,
+          "total": 158
         },
         "overall": {
-          "won": 121,
-          "total": 227
+          "won": 163,
+          "total": 306
         }
       }
     },
     "kok": {
       "Abyss": {
         "attacker": {
-          "won": 109,
-          "total": 189
+          "won": 124,
+          "total": 216
         },
         "defender": {
-          "won": 85,
-          "total": 158
+          "won": 98,
+          "total": 180
         },
         "overall": {
-          "won": 194,
-          "total": 347
+          "won": 222,
+          "total": 396
+        }
+      },
+      "Ascent": {
+        "attacker": {
+          "won": 28,
+          "total": 53
+        },
+        "defender": {
+          "won": 31,
+          "total": 59
+        },
+        "overall": {
+          "won": 59,
+          "total": 112
         }
       },
       "Bind": {
         "attacker": {
-          "won": 58,
-          "total": 123
+          "won": 62,
+          "total": 132
         },
         "defender": {
-          "won": 72,
-          "total": 163
+          "won": 76,
+          "total": 175
         },
         "overall": {
-          "won": 130,
-          "total": 286
+          "won": 138,
+          "total": 307
         }
       },
       "Breeze": {
         "attacker": {
-          "won": 69,
-          "total": 140
+          "won": 98,
+          "total": 186
         },
         "defender": {
-          "won": 75,
-          "total": 138
+          "won": 96,
+          "total": 188
         },
         "overall": {
-          "won": 144,
-          "total": 278
+          "won": 194,
+          "total": 374
         }
       },
       "Corrode": {
@@ -157,90 +213,132 @@
           "total": 321
         }
       },
-      "Haven": {
+      "Fracture": {
         "attacker": {
-          "won": 103,
-          "total": 214
+          "won": 8,
+          "total": 13
         },
         "defender": {
-          "won": 122,
-          "total": 242
+          "won": 18,
+          "total": 22
         },
         "overall": {
-          "won": 225,
-          "total": 456
+          "won": 26,
+          "total": 35
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 116,
+          "total": 262
+        },
+        "defender": {
+          "won": 132,
+          "total": 263
+        },
+        "overall": {
+          "won": 248,
+          "total": 525
+        }
+      },
+      "Lotus": {
+        "attacker": {
+          "won": 26,
+          "total": 51
+        },
+        "defender": {
+          "won": 25,
+          "total": 60
+        },
+        "overall": {
+          "won": 51,
+          "total": 111
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 100,
-          "total": 207
+          "won": 132,
+          "total": 277
         },
         "defender": {
-          "won": 110,
-          "total": 225
+          "won": 133,
+          "total": 274
         },
         "overall": {
-          "won": 210,
-          "total": 432
+          "won": 265,
+          "total": 551
         }
       },
       "Split": {
         "attacker": {
-          "won": 128,
-          "total": 251
+          "won": 157,
+          "total": 310
         },
         "defender": {
-          "won": 116,
-          "total": 235
+          "won": 144,
+          "total": 296
         },
         "overall": {
-          "won": 244,
-          "total": 486
+          "won": 301,
+          "total": 606
         }
       }
     },
     "nar": {
       "Abyss": {
         "attacker": {
-          "won": 144,
-          "total": 247
+          "won": 165,
+          "total": 283
         },
         "defender": {
-          "won": 113,
-          "total": 219
+          "won": 128,
+          "total": 253
         },
         "overall": {
-          "won": 257,
-          "total": 466
+          "won": 293,
+          "total": 536
+        }
+      },
+      "Ascent": {
+        "attacker": {
+          "won": 43,
+          "total": 86
+        },
+        "defender": {
+          "won": 43,
+          "total": 80
+        },
+        "overall": {
+          "won": 86,
+          "total": 166
         }
       },
       "Bind": {
         "attacker": {
-          "won": 94,
-          "total": 188
+          "won": 98,
+          "total": 197
         },
         "defender": {
-          "won": 95,
-          "total": 210
+          "won": 99,
+          "total": 222
         },
         "overall": {
-          "won": 189,
-          "total": 398
+          "won": 197,
+          "total": 419
         }
       },
       "Breeze": {
         "attacker": {
-          "won": 120,
-          "total": 234
+          "won": 154,
+          "total": 292
         },
         "defender": {
-          "won": 111,
-          "total": 246
+          "won": 137,
+          "total": 320
         },
         "overall": {
-          "won": 231,
-          "total": 480
+          "won": 291,
+          "total": 612
         }
       },
       "Corrode": {
@@ -257,56 +355,87 @@
           "total": 468
         }
       },
-      "Haven": {
+      "Fracture": {
         "attacker": {
-          "won": 141,
-          "total": 302
+          "won": 31,
+          "total": 44
         },
         "defender": {
-          "won": 184,
-          "total": 350
+          "won": 15,
+          "total": 34
         },
         "overall": {
-          "won": 325,
-          "total": 652
+          "won": 46,
+          "total": 78
+        }
+      },
+      "Haven": {
+        "attacker": {
+          "won": 189,
+          "total": 410
+        },
+        "defender": {
+          "won": 216,
+          "total": 418
+        },
+        "overall": {
+          "won": 405,
+          "total": 828
+        }
+      },
+      "Lotus": {
+        "attacker": {
+          "won": 42,
+          "total": 79
+        },
+        "defender": {
+          "won": 35,
+          "total": 87
+        },
+        "overall": {
+          "won": 77,
+          "total": 166
         }
       },
       "Pearl": {
         "attacker": {
-          "won": 117,
-          "total": 231
+          "won": 149,
+          "total": 301
         },
         "defender": {
-          "won": 123,
-          "total": 242
+          "won": 146,
+          "total": 291
         },
         "overall": {
-          "won": 240,
-          "total": 473
+          "won": 295,
+          "total": 592
         }
       },
       "Split": {
         "attacker": {
-          "won": 159,
-          "total": 299
+          "won": 202,
+          "total": 394
         },
         "defender": {
-          "won": 157,
-          "total": 312
+          "won": 211,
+          "total": 426
         },
         "overall": {
-          "won": 316,
-          "total": 611
+          "won": 413,
+          "total": 820
         }
       }
     }
   },
   "maps": [
     "Abyss",
+    "Ascent",
     "Bind",
     "Breeze",
     "Corrode",
+    "Fracture",
     "Haven",
+    "Lotus",
     "Pearl",
     "Split"
   ]

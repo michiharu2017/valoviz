@@ -1,11 +1,12 @@
 // 利用可能なマップリスト（エクスポート時に置換される）
-const AVAILABLE_MAPS = ['Abyss', 'Bind', 'Breeze', 'Corrode', 'Haven', 'Pearl', 'Split'];
+const AVAILABLE_MAPS = ['Abyss', 'Ascent', 'Bind', 'Breeze', 'Corrode', 'Fracture', 'Haven', 'Lotus', 'Pearl', 'Split'];
 
 let userData = null;
 let kdData = null;
 let positionData = null;
 let userKdData = null;
 let statsData = null;
+let skillData = null;
 let currentTab = 'stats';
 
 // レスポンシブなプロットサイズを計算
@@ -26,7 +27,7 @@ function switchTab(tab) {
     currentTab = tab;
 
     // タブボタンのアクティブ状態を更新
-    const tabNames = ['user', 'kd', 'position', 'userkd', 'stats'];
+    const tabNames = ['user', 'kd', 'position', 'userkd', 'stats', 'skill'];
     document.querySelectorAll('.tab-button').forEach((btn, idx) => {
         btn.classList.toggle('active', tab === tabNames[idx]);
     });
@@ -37,13 +38,14 @@ function switchTab(tab) {
     document.getElementById('positionControls').classList.toggle('active', tab === 'position');
     document.getElementById('userkdControls').classList.toggle('active', tab === 'userkd');
     document.getElementById('statsControls').classList.toggle('active', tab === 'stats');
+    document.getElementById('skillControls').classList.toggle('active', tab === 'skill');
 
     // ユーザー選択の表示切り替え
     document.getElementById('userSelectContainer').style.display =
         (tab === 'user' || tab === 'userkd') ? '' : 'none';
 
-    // 勝率タブではマップ・攻守プルダウンを非表示
-    const hideMapAndSide = tab === 'stats';
+    // マップ・攻守プルダウンを非表示にするタブ
+    const hideMapAndSide = (tab === 'stats' || tab === 'skill');
     document.getElementById('sideSelectContainer').style.display =
         (tab === 'position' || hideMapAndSide) ? 'none' : '';
     document.getElementById('mapSelectContainer').style.display =
@@ -52,6 +54,10 @@ function switchTab(tab) {
     // プロット更新
     if (tab === 'stats') {
         loadStats();
+        return;
+    }
+    if (tab === 'skill') {
+        loadSkillUsage();
         return;
     }
     const mapName = document.getElementById('mapSelect').value;
@@ -648,6 +654,122 @@ function updateUserKdPlot() {
     Plotly.newPlot('plotDiv', [trace], layout, {responsive: true, displayModeBar: !plotSize.isMobile});
 }
 
+// スキル使用データを読み込む
+async function loadSkillUsage() {
+    try {
+        if (!skillData) {
+            const response = await fetch('data/skill_usage.json');
+            skillData = await response.json();
+            const agentSelect = document.getElementById('agentSelect');
+            agentSelect.innerHTML = '';
+            skillData.agents.forEach(agent => {
+                const opt = document.createElement('option');
+                opt.value = agent;
+                opt.textContent = agent;
+                agentSelect.appendChild(opt);
+            });
+        }
+        document.getElementById('mapName').textContent = 'スキル使用';
+        updateSkillPlot();
+    } catch (error) {
+        console.error('Error loading skill data:', error);
+        document.getElementById('plotDiv').innerHTML = '<p style="color: red;">スキルデータの読み込みに失敗しました。</p>';
+    }
+}
+
+// スキルカラー定義
+const SKILL_COLORS = { C: '#4ec9a0', Q: '#5b9bd5', E: '#f0a060', X: '#b07ef0' };
+
+// スキル使用プロットを更新 (2×2 facet: C/Q/E/X)
+function updateSkillPlot() {
+    if (!skillData) return;
+    const agent = document.getElementById('agentSelect').value;
+    if (!agent) return;
+
+    const agentData = skillData.data[agent] || {};
+    const tiers = skillData.tiers;
+    const slots = ['C', 'Q', 'E', 'X'];
+    const plotSize = getPlotSize();
+    const isMobile = plotSize.isMobile;
+
+    const agentAbilities = (skillData.ability_names || {})[agent] || {};
+    const slotLabel = slot => {
+        const name = agentAbilities[slot];
+        return name ? `${slot} — ${name}` : slot;
+    };
+
+    const traces = [];
+    const annotations = [];
+    const subplotPositions = [
+        { xaxis: 'x',  yaxis: 'y'  },
+        { xaxis: 'x2', yaxis: 'y2' },
+        { xaxis: 'x3', yaxis: 'y3' },
+        { xaxis: 'x4', yaxis: 'y4' },
+    ];
+
+    slots.forEach((slot, i) => {
+        const pos = subplotPositions[i];
+        const slotData = agentData[slot] || {};
+        const color = SKILL_COLORS[slot];
+
+        const xVals = tiers.filter(t => slotData[t] !== undefined);
+        const yVals = xVals.map(t => slotData[t]);
+
+        traces.push({
+            x: xVals,
+            y: yVals,
+            type: 'bar',
+            marker: { color: color, opacity: 0.85 },
+            xaxis: pos.xaxis,
+            yaxis: pos.yaxis,
+            hovertemplate: `%{x}<br>${slotLabel(slot)}: <b>%{y:.3f}</b> /round<extra></extra>`,
+            showlegend: false,
+        });
+
+        // サブプロットタイトルは xaxis の title として設定（重なり回避）
+        // annotationは使わず、各xaxisのtitleプロパティで代替
+    });
+
+    const w = Math.min(plotSize.width, 1000);
+    const h = isMobile ? w * 1.3 : Math.max(520, w * 0.72);
+
+    const axisCommon = {
+        showgrid: true, gridcolor: '#444',
+        zeroline: false,
+        tickfont: { color: '#ccc', size: isMobile ? 9 : 11 },
+        automargin: true,
+    };
+
+    // 行間を広くとる: 上段 [0.58,1.0]、下段 [0,0.42]、間隔 0.16
+    const layout = {
+        title: {
+            text: `${agent} — スキル使用回数 / ラウンド`,
+            font: { size: isMobile ? 14 : 18 },
+        },
+        width: w,
+        height: h,
+        plot_bgcolor: '#2a2a2a',
+        paper_bgcolor: '#1a1a1a',
+        font: { color: '#ffffff' },
+        margin: { l: 45, r: 20, t: 60, b: isMobile ? 80 : 70 },
+        annotations: [],
+        xaxis:  { ...axisCommon, domain: [0, 0.46],   anchor: 'y',  tickangle: -35,
+                  title: { text: slotLabel('C'), font: { size: 13, color: SKILL_COLORS.C } } },
+        xaxis2: { ...axisCommon, domain: [0.54, 1.0], anchor: 'y2', tickangle: -35,
+                  title: { text: slotLabel('Q'), font: { size: 13, color: SKILL_COLORS.Q } } },
+        xaxis3: { ...axisCommon, domain: [0, 0.46],   anchor: 'y3', tickangle: -35,
+                  title: { text: slotLabel('E'), font: { size: 13, color: SKILL_COLORS.E } } },
+        xaxis4: { ...axisCommon, domain: [0.54, 1.0], anchor: 'y4', tickangle: -35,
+                  title: { text: slotLabel('X'), font: { size: 13, color: SKILL_COLORS.X } } },
+        yaxis:  { ...axisCommon, domain: [0.58, 1.0], anchor: 'x',  title: { text: '回/round', font: { size: 11 } } },
+        yaxis2: { ...axisCommon, domain: [0.58, 1.0], anchor: 'x2' },
+        yaxis3: { ...axisCommon, domain: [0, 0.42],   anchor: 'x3', title: { text: '回/round', font: { size: 11 } } },
+        yaxis4: { ...axisCommon, domain: [0, 0.42],   anchor: 'x4' },
+    };
+
+    Plotly.newPlot('plotDiv', traces, layout, { responsive: true, displayModeBar: false });
+}
+
 // 勝率データを読み込む
 async function loadStats() {
     try {
@@ -853,6 +975,13 @@ document.getElementById('userkdTimeSelect').addEventListener('change', function(
     }
 });
 
+// エージェント選択イベント
+document.getElementById('agentSelect').addEventListener('change', function() {
+    if (currentTab === 'skill' && skillData) {
+        updateSkillPlot();
+    }
+});
+
 // ユーザー選択イベント
 document.getElementById('userSelect').addEventListener('change', function() {
     const mapName = document.getElementById('mapSelect').value;
@@ -881,6 +1010,8 @@ window.addEventListener('resize', function() {
                 updatePositionPlot();
             } else if (currentTab === 'userkd' && userKdData) {
                 updateUserKdPlot();
+            } else if (currentTab === 'skill' && skillData) {
+                updateSkillPlot();
             }
         }
     }, 250);

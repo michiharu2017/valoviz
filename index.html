@@ -19,6 +19,7 @@
         <button class="tab-button" onclick="switchTab('position')">ポジション</button>
         <button class="tab-button" onclick="switchTab('userkd')">Kill Rate差分</button>
         <button class="tab-button active" onclick="switchTab('stats')">勝率</button>
+        <button class="tab-button" onclick="switchTab('skill')">スキル使用</button>
     </div>
 
     <div id="controls">
@@ -113,6 +114,20 @@
         <div id="statsControls" class="tab-content active">
             <div class="info">
                 ターゲットユーザーのマップ別ラウンド勝率を表示します。
+            </div>
+        </div>
+
+        <!-- スキル使用タブ用コントロール -->
+        <div id="skillControls" class="tab-content">
+            <div class="info">
+                エージェントを選択すると、スキルごとのランク別使用回数/ラウンドを表示します。
+            </div>
+            <div class="info" style="color: #f0c060; font-size: 0.85em;">
+                ⚠️ スキル名はデータ分析から推定しており、一部エージェントで誤っている可能性があります。
+            </div>
+            <div class="slider-container">
+                <label class="slider-label" for="agentSelect">エージェント</label>
+                <select id="agentSelect"></select>
             </div>
         </div>
     </div>
